@@ -1,0 +1,113 @@
+<mvc:View controllerName="vcpapp.sacheatmap.controller.View1"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns:core="sap.ui.core"
+    xmlns="sap.m"
+    xmlns:viz="sap.viz.ui5.controls"
+    xmlns:viz.data="sap.viz.ui5.data"
+    xmlns:viz.feeds="sap.viz.ui5.controls.common.feeds"
+    xmlns:f="sap.f"
+	xmlns:fb="sap.ui.comp.filterbar">
+    <Page id="page" title="{i18n>title}">
+    <content>
+<!-- <OverflowToolbar height="10%">
+<HBox>
+    
+    <VBox>
+    <Label text="Location"/>
+    <MultiComboBox id="mcLocation" selectionChange=".onLocationSelect" />
+    </VBox>
+
+    <VBox>
+    <Label text="Configuration Product"/>
+    <MultiComboBox id="mcConfig" selectionChange=".onConfigSelect" />
+    </VBox>
+
+    <VBox>
+    <Label text="Product"/>
+    <MultiComboBox id="mcProduct" selectionChange=".onProdSelect" />
+    </VBox>
+
+    <VBox>
+    <Label text="Cluster ID"/>
+    <MultiComboBox id="mcCluster" selectionChange=".onClusterSelect" />
+    </VBox>
+
+    <VBox>
+    <Label text="Year"/>
+    <MultiComboBox id="mcYear" />
+    </VBox>
+
+    <VBox>
+    <Button text="Apply Filters" press=".onApplyFilters"/>
+    </VBox>
+</HBox>
+</OverflowToolbar> -->
+
+<fb:FilterBar id="filterbar" persistencyKey="myPersKey" useToolbar="false" search="onApplyFilters">
+							<fb:filterGroupItems>
+								<fb:FilterGroupItem name="Location" label="Location" groupName="Group1" visibleInFilterBar="true">
+									<fb:control>
+										<MultiComboBox id="mcLocation" selectionChange=".onLocationSelect" />
+									</fb:control>
+								</fb:FilterGroupItem>
+								<fb:FilterGroupItem name="Configuration Product" label="Configuration Product" groupName="Group1" visibleInFilterBar="true">
+									<fb:control>
+									    <MultiComboBox id="mcConfig"/>
+									</fb:control>
+								</fb:FilterGroupItem>
+								<fb:FilterGroupItem name="Product" label="Product" groupName="Group1" visibleInFilterBar="true">
+									<fb:control>
+										    <MultiComboBox id="mcProduct" />
+									</fb:control>
+								</fb:FilterGroupItem>
+								<fb:FilterGroupItem name="Cluster" label="Cluster" groupName="Group1" visibleInFilterBar="true">
+									<fb:control>
+                                <MultiComboBox id="mcCluster" selectionChange=".onClusterSelect">
+                                <core:Item key="ALL" text="Select All" />
+                                </MultiComboBox>
+									</fb:control>
+								</fb:FilterGroupItem>
+								<fb:FilterGroupItem name="Year" label="Year" groupName="Group1" visibleInFilterBar="true">
+									<fb:control>
+										    <MultiComboBox id="mcYear" selectedKeys="2022"/>
+									</fb:control>
+								</fb:FilterGroupItem>
+                                <fb:FilterGroupItem name="Characterist Descriptions" label="Characterist Descriptions" groupName="Group1" visibleInFilterBar="true">
+									<fb:control>
+										    <MultiComboBox id="mcChar" />
+									</fb:control>
+								</fb:FilterGroupItem>
+							</fb:filterGroupItems> 
+						</fb:FilterBar>
+<viz:VizFrame
+    id="heatmap"
+    uiConfig="{applicationSet:'fiori'}"
+    vizType="heatmap"
+    width="100%"
+    height="600px">
+
+    <viz:dataset>
+        <!-- Bind to a JSONModel path -->
+        <viz.data:FlattenedDataset data="{/Results}">
+            <viz.data:dimensions>
+                <viz.data:DimensionDefinition name="Attribute" value="{CHAR_DESC}" />
+                <viz.data:DimensionDefinition name="PrimaryID" value="{PrimaryLabel}" />
+            </viz.data:dimensions>
+            <viz.data:measures>
+                <viz.data:MeasureDefinition name="Value" value="{CHARVAL_NUM}" />
+                <viz.data:MeasureDefinition name="Quantity" value="{ORD_QTY}" />
+            </viz.data:measures>
+        </viz.data:FlattenedDataset>
+    </viz:dataset>
+
+    <viz:feeds>
+        <viz.feeds:FeedItem uid="categoryAxis" type="Dimension" values="Attribute" />
+        <viz.feeds:FeedItem uid="categoryAxis2" type="Dimension" values="PrimaryID" />
+        <viz.feeds:FeedItem uid="color" type="Measure" values="Value" />
+        <viz.feeds:FeedItem uid="size" type="Measure" values="Quantity" />
+    </viz:feeds>
+</viz:VizFrame>
+
+</content>
+    </Page>
+</mvc:View>

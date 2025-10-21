@@ -1,0 +1,483 @@
+<mvc:View
+    controllerName="sacforecastorder.sacforecastorder.controller.View1"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns:core="sap.ui.core"
+    xmlns="sap.m"
+    xmlns:viz="sap.viz.ui5.controls"
+    xmlns:viz.data="sap.viz.ui5.data"
+    xmlns:viz.feeds="sap.viz.ui5.controls.common.feeds"
+    xmlns:f="sap.f"
+    xmlns:fb="sap.ui.comp.filterbar"
+>
+    <Page
+        id="page"
+        title="{i18n>title}"
+    >
+        <content>
+            <VBox width="100%">
+                <fb:FilterBar
+                    id="filterbar"
+                    persistencyKey="myPersKey"
+                    useToolbar="false"
+                    search="onApplyFilters"
+                >
+                    <fb:filterGroupItems>
+                        <fb:FilterGroupItem
+                            name="Location"
+                            label="Location"
+                            groupName="Group1"
+                            visibleInFilterBar="true"
+                            mandatory="true"
+                        >
+                            <fb:control>
+                                <Select
+                                    id="idLocation"
+                                    change=".onLocationChange"
+                                    items="{/}"
+                                    forceSelection="false"
+                                >
+                                    <core:Item
+                                        key="{LOCATION_ID}"
+                                        text="{LOCATION_ID}"
+                                    />
+                                </Select>
+                            </fb:control>
+                        </fb:FilterGroupItem>
+
+                        <fb:FilterGroupItem
+                            name="ConfigurationProduct"
+                            label="Configuration Product"
+                            groupName="Group1"
+                            visibleInFilterBar="true"
+                            mandatory="true"
+                        >
+                            <fb:control>
+                                <Select
+                                    id="idConfigProduct"
+                                    forceSelection="false"
+                                    items="{path: 'configModel>/ConfigProducts'}"
+                                    change=".onConfigProductChange"
+                                >
+                                    <core:Item
+                                        key="{configModel>key}"
+                                        text="{configModel>text}"
+                                    />
+                                </Select>
+                            </fb:control>
+                        </fb:FilterGroupItem>
+
+                        <fb:FilterGroupItem
+                            name="Product"
+                            label="Product"
+                            groupName="Group1"
+                            visibleInFilterBar="true"
+                            mandatory="true"
+                        >
+                            <fb:control>
+                                <Select
+                                    id="idProduct"
+                                    forceSelection="false"
+                                    items="{/}"
+                                    change=".onProductChange"
+                                >
+                                    <core:Item
+                                        key="{PRODUCT_ID}"
+                                        text="{PRODUCT_ID}"
+                                    />
+                                </Select>
+                            </fb:control>
+                        </fb:FilterGroupItem>
+
+                        <fb:FilterGroupItem
+                            name="ModelVersion"
+                            label="Model Version"
+                            groupName="Group1"
+                            visibleInFilterBar="true"
+                        >
+                            <fb:control>
+                                <MultiComboBox
+                                    id="idModelVersion"
+                                    items="{/}"
+                                    change=".onModelVersionChange"
+                                >
+                                    <core:Item
+                                        key="{MODEL_VERSION}"
+                                        text="{MODEL_VERSION}"
+                                    />
+                                </MultiComboBox>
+                            </fb:control>
+                        </fb:FilterGroupItem>
+
+                        <fb:FilterGroupItem
+                            name="UniqueID"
+                            label="Unique ID"
+                            groupName="Group1"
+                            visibleInFilterBar="true"
+                        >
+                            <fb:control>
+                                <MultiComboBox
+                                    id="idUniqueID"
+                                    items="{/}"
+                                    showSelectAll="true"
+                                    selectionChange=".onUniqueIDChange"
+                                >
+                                    <core:Item
+                                        key="{UNIQUE_ID}"
+                                        text="{UNIQUE_ID}"
+                                    />
+                                </MultiComboBox>
+                            </fb:control>
+                        </fb:FilterGroupItem>
+
+                        <fb:FilterGroupItem
+                        name="DateRange"
+                        label="Date Range"
+                        groupName="Group1"
+                        visibleInFilterBar="true"
+                        mandatory="true">
+                        <fb:control>
+                            <DateRangeSelection
+                                id="DRS1"
+                                change=".onDateRangeChange"
+                                displayFormat="dd/MM/yyyy"
+                                delimiter=" - "
+                            />
+                        </fb:control>
+                    </fb:FilterGroupItem>
+                    </fb:filterGroupItems>
+                </fb:FilterBar>
+
+                <!-- First Row: Product Chart and Side Panel -->
+                <HBox
+                    width="100%"
+                    justifyContent="SpaceBetween"
+                    class="sapUiSmallMarginTop"
+                >
+                    <VBox width="70%">
+                        <Panel headerText="Product" width="950px">
+                            <viz:VizFrame
+                                id="idVizFrame"
+                                vizType="stacked_bar"
+                                width="100%"
+                                height="400px"
+                                uiConfig="{applicationSet:'fiori'}"
+                            >
+                                <viz:dataset>
+                                    <viz.data:FlattenedDataset
+                                        data="{/chartData}"
+                                    >
+                                        <viz.data:dimensions>
+                                            <viz.data:DimensionDefinition
+                                                name="Product"
+                                                value="{Product}"
+                                            />
+                                        </viz.data:dimensions>
+                                        <viz.data:measures>
+                                            <viz.data:MeasureDefinition
+                                                name="Unconsumed"
+                                                value="{Forecast}"
+                                            />
+                                            <viz.data:MeasureDefinition
+                                                name="Sales"
+                                                value="{Actual}"
+                                            />
+                                        </viz.data:measures>
+                                    </viz.data:FlattenedDataset>
+                                </viz:dataset>
+                                <viz:feeds>
+                                    <viz.feeds:FeedItem
+                                        uid="categoryAxis"
+                                        type="Dimension"
+                                        values="Product"
+                                    />
+                                    <viz.feeds:FeedItem
+                                        uid="valueAxis"
+                                        type="Measure"
+                                        values="Unconsumed,Sales"
+                                    />
+                                </viz:feeds>
+                            </viz:VizFrame>
+                        </Panel>
+
+                        <Panel
+                            width="950px"
+                            headerText="Characteristics Value"
+                            class="sapUiSmallMarginTop"
+                        >
+                            <viz:VizFrame
+                                id="idCharChart"
+                                vizType="combination"
+                                width="100%"
+                                height="300px"
+                            >
+                                <viz:dataset>
+                                    <viz.data:FlattenedDataset
+                                        data="{/CharData}"
+                                    >
+                                        <viz.data:dimensions>
+                                            <viz.data:DimensionDefinition
+                                                name="Year Quarter"
+                                                value="{YEAR_QUAETER}"
+                                            />
+                                            <viz.data:DimensionDefinition
+                                                name="Characteristic"
+                                                value="{CHAR_DESC}"
+                                            />
+                                            <viz.data:DimensionDefinition
+                                                name="Char Value"
+                                                value="{CHARVAL_NUM}"
+                                            />
+                                        </viz.data:dimensions>
+                                        <viz.data:measures>
+                                            <viz.data:MeasureDefinition
+                                                name="Sales"
+                                                value="{ACTUAL_QTY}"
+                                            />
+                                            <viz.data:MeasureDefinition
+                                                name="Unconsumed"
+                                                value="{UNCONSUMED_FORECAST}"
+                                            />
+                                            <viz.data:MeasureDefinition
+                                                name="Forecast"
+                                                value="{CIR_QTY}"
+                                            />
+                                        </viz.data:measures>
+                                    </viz.data:FlattenedDataset>
+                                </viz:dataset>
+
+                                <viz:feeds>
+                                    <viz.feeds:FeedItem
+                                        uid="categoryAxis"
+                                        type="Dimension"
+                                        values="Year Quarter,Characteristic,Char Value"
+                                    />
+
+                                    <viz.feeds:FeedItem
+                                        uid="valueAxis"
+                                        type="Measure"
+                                        values="Sales,Unconsumed"
+                                    />
+
+                                    <viz.feeds:FeedItem
+                                        uid="valueAxis2"
+                                        type="Measure"
+                                        values="Forecast"
+                                    />
+                                </viz:feeds>
+                            </viz:VizFrame>
+                        </Panel>
+                    </VBox>
+
+                    <VBox
+                        width="550px"
+                        class="sapUiTinyMarginBegin"
+                    >
+                        <!-- <Panel headerText="Date Range">
+                            <VBox>
+                                <DateRangeSelection
+                                    id="DRS1"
+                                    class="DRS1"
+                                    value="{
+				'type': 'sap.ui.model.type.DateInterval',
+				'formatOptions': {
+					'pattern': 'dd/MM/yyyy'
+				},
+				'parts': [
+					{
+						'type': 'sap.ui.model.type.Date',
+						'path': '/start'
+					},
+					{
+						'type': 'sap.ui.model.type.Date',
+						'path': '/end'
+					}
+				]
+			}"
+                                    change="onDateRangeChange"
+                                />
+                            </VBox>
+                        </Panel> -->
+                        <Button id="charButton" width="150px" text="Apply Filters" type="Emphasized" press="onAppFilter"></Button>
+                        <HBox
+                            width="100%"
+                           
+                        >
+                        <!-- <VBox> -->
+                            <Panel
+                                headerText="Characteristics"
+                                width="100%"
+                                class="sapUiSmallMarginTop"
+                            >
+                                <ScrollContainer
+                                    width="100%"
+                                    height="680px"
+                                    vertical="true"
+                                    horizontal="false"
+                                >
+                                <List
+                                    id="idCharacteristics"
+                                    mode="MultiSelect"
+                                    items="{charModel>/Characteristics}"
+                                    selectionChange="onCharacteristicChange"
+                                    
+                                >
+                                    <StandardListItem
+                                        title="{charModel>text}"
+                                        
+                                    />
+                                </List>
+                                </ScrollContainer>
+                            </Panel>
+                            
+                            <!-- </VBox> -->
+
+                            <!-- <VBox> -->
+                            <Panel
+                                headerText="Characteristic Values"
+                                width="100%"
+                                class="sapUiSmallMarginTop"
+                            >
+                              <ScrollContainer
+                                    width="100%"
+                                    height="680px"
+                                    vertical="true"
+                                    horizontal="false"
+                                >
+                                <List
+                                    id="idCharValNum"
+                                    mode="MultiSelect"
+                                    items="{/CharValNum}"
+                                    selectionChange="onCharValueChange"
+                                >
+                                    <StandardListItem title="{text}" description="{char}" />
+                                </List>
+                                </ScrollContainer>
+                            </Panel>
+                             <!-- <Button id="ValButton" text="Apply" press="onCharValueChange"></Button>
+                            </VBox> -->
+
+                        </HBox>
+                         <!-- <Button id="ValIds" text="Apply"></Button> -->
+                    </VBox>
+                </HBox>
+
+                <!-- Second Row: Forecast and Actual Charts - Full Width, Below Everything -->
+                <HBox
+                    width="100%"
+                    justifyContent="SpaceBetween"
+                    class="sapUiMediumMarginTop"
+                >
+                    <Panel
+                        headerText="Forecast Quantity per Assembly, Week"
+                        class="sapUiTinyMarginEnd ForecastPanel"
+                    >
+                        <viz:VizFrame
+                            id="idForecastChart"
+                            vizType="line"
+                            width="100%"
+                            height="400px"
+                            uiConfig="{applicationSet:'fiori'}"
+                        >
+                            <viz:dataset>
+                                <viz.data:FlattenedDataset
+                                    data="{/ForecastChartData}"
+                                >
+                                    <viz.data:dimensions>
+                                        <viz.data:DimensionDefinition
+                                            name="Week"
+                                            value="{WEEK_DATE}"
+                                        />
+
+                                        <viz.data:DimensionDefinition
+                                            name="Assembly"
+                                            value="{ASSEMBLY_DESC}"
+                                        />
+                                    </viz.data:dimensions>
+
+                                    <viz.data:measures>
+                                        <viz.data:MeasureDefinition
+                                            name="Forecast Quantity"
+                                            value="{FORECAST_QTY}"
+                                        />
+                                    </viz.data:measures>
+                                </viz.data:FlattenedDataset>
+                            </viz:dataset>
+
+                            <viz:feeds>
+                                <viz.feeds:FeedItem
+                                    uid="valueAxis"
+                                    type="Measure"
+                                    values="Forecast Quantity"
+                                />
+
+                                <viz.feeds:FeedItem
+                                    uid="categoryAxis"
+                                    type="Dimension"
+                                    values="Week"
+                                />
+
+                                <viz.feeds:FeedItem
+                                    uid="color"
+                                    type="Dimension"
+                                    values="Assembly"
+                                />
+                            </viz:feeds>
+                        </viz:VizFrame>
+                    </Panel>
+
+                    <Panel
+                        headerText="Actual Quantity per Assembly, Week"
+                        class="ActualPanel"
+                    >
+                        <viz:VizFrame
+                            id="idActualChart"
+                            vizType="line"
+                            width="100%"
+                            height="400px"
+                        >
+                            <viz:dataset>
+                                <viz.data:FlattenedDataset
+                                    data="{/ActualChartData}"
+                                >
+                                    <viz.data:dimensions>
+                                        <viz.data:DimensionDefinition
+                                            name="Week"
+                                            value="{WEEK_DATE}"
+                                        />
+                                        <viz.data:DimensionDefinition
+                                            name="Assembly"
+                                            value="{ASSEMBLY_DESC}"
+                                        />
+                                    </viz.data:dimensions>
+                                    <viz.data:measures>
+                                        <viz.data:MeasureDefinition
+                                            name="Actual Quantity"
+                                            value="{FORECAST_QTY}"
+                                        />
+                                    </viz.data:measures>
+                                </viz.data:FlattenedDataset>
+                            </viz:dataset>
+                            <viz:feeds>
+                                <viz.feeds:FeedItem
+                                    uid="valueAxis"
+                                    type="Measure"
+                                    values="Actual Quantity"
+                                />
+                                <viz.feeds:FeedItem
+                                    uid="categoryAxis"
+                                    type="Dimension"
+                                    values="Week"
+                                />
+                                <viz.feeds:FeedItem
+                                    uid="color"
+                                    type="Dimension"
+                                    values="Assembly"
+                                />
+                            </viz:feeds>
+                        </viz:VizFrame>
+                    </Panel>
+                </HBox>
+            </VBox>
+        </content>
+    </Page>
+</mvc:View>

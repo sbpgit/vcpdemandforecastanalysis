@@ -1,0 +1,32 @@
+{
+  "xsappname": "sacforecastordersacforecastorder",
+  "tenant-mode": "dedicated",
+  "description": "Security profile of called application",
+  "scopes": [
+    {
+      "name": "uaa.user",
+      "description": "UAA"
+    },
+    {
+      "name": "$XSAPPNAME.User",
+      "description": "UAA Display"
+    },
+    {
+      "name": "$XSAPPNAME.read",
+      "description": "Read authorization information"
+    },
+    {
+      "name": "$XSAPPNAME.admin",
+      "description": "Read authorization information"
+    }
+  ],
+  "role-templates": [
+     {
+      "name": "VCPUserRole",
+      "description": "UAA VCPUserRole",
+      "scope-references": [
+        "$XSAPPNAME.User"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+.ForecastPanel{
+    width: 240% !important;
+    height: 90% !important;
+}
+
+.ActualPanel{
+    width: 240% !important;
+    height: 90% !important;
+    right: 410px !important;
+}
+
+.sapMPanelContent{
+    padding-left: 0px !important;
+    padding-right: 0px !important;
+}
