@@ -944,6 +944,7 @@ console.log("")
                         );
                         that.loadForecastChart();
                         that.loadActualChart()
+                        //////// reseting data/////
                         if(that.chartfinData){
                             that.chartfinData = undefined;
                         }
