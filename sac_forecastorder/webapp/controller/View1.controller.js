@@ -204,7 +204,7 @@ sap.ui.define([
                   that.oModel.read("/getAsmbReqAnalysis", {
                 // filters: aFilters,
                 urlParameters: {
-                    $apply: `filter(LOCATION_ID eq '1600' and PRODUCT_ID eq 'VCP_1600'  and (WEEK_DATE ge 2025-10-01 and WEEK_DATE le 2026-01-31))`,
+                    $apply: `filter(LOCATION_ID eq '1000' and PRODUCT_ID eq 'VCP_VEHICLE'  and (WEEK_DATE ge 2025-10-01 and WEEK_DATE le 2026-01-31))`,
                     // "$select": "WEEK_DATE,ASSEMBLY_DESC,CIR_QTY,COUNT",
                     "$top": 100000
                 },
@@ -215,6 +215,7 @@ sap.ui.define([
                 console.log(error);
                 }
             });
+            
 
                 var locationModel = new JSONModel(loc);
             this.byId("idLocation").setModel(locationModel);
@@ -943,6 +944,9 @@ console.log("")
                         );
                         that.loadForecastChart();
                         that.loadActualChart()
+                        if(that.chartfinData){
+                            that.chartfinData = undefined;
+                        }
 
                     } else {
                         sap.m.MessageToast.show("No Unique IDs found for selected product and date range.");
@@ -2981,6 +2985,7 @@ console.log("")
                 },
                 success:function(oData){
                     var finData = JSON.parse(oData.getPlannedOrderData);
+                    that.chartfinData = finData;
                     const unique = finData.map(id => `UNIQUE_ID eq ${JSON.parse(id.UNIQUE_ID)}`).join(' or ');
                       that.oModel.read("/getCirGen", {
                         urlParameters:{
@@ -3585,6 +3590,15 @@ console.log("")
             var uniqueID = this.byId("idUniqueID");
             var  uniqueIdF = uniqueID.getSelectedItems().length > 0 ? uniqueID.getSelectedItems().map(y=>{ return y.getText()}):uniqueID.getItems().map(x=>{return x.getText()})
 
+            // var charvallist = this.byId("idCharValNum")
+            var fData = this.chartfinData;
+            if(fData){
+                if(fData.length>0){
+             const uniqueIDs1 = [...new Set(fData.map(item => item.UNIQUE_ID))];
+             var uniqueIdF = uniqueIDs1
+            }
+        }
+
             // Get all Unique IDs from the dropdown (not just selected ones)
             var oUniqueIDModel = this.getView().getModel("dependentModel");
             var aAllUniqueIDs = oUniqueIDModel ? (oUniqueIDModel.getProperty("/UniqueIDs") || []) : [];
@@ -3624,7 +3638,7 @@ console.log("")
             oModel.read("/getAsmbReqAnalysis", {
                 // filters: aFilters,
                 urlParameters: {
-                    $apply: `filter(LOCATION_ID eq '${sLocation}' and PRODUCT_ID eq '${sProduct}' and (WEEK_DATE ge ${oStartDate.toLocaleDateString("en-CA")} and WEEK_DATE le ${oEndDate.toLocaleDateString("en-CA")}) and (${unique}))/groupby((WEEK_DATE,ASSEMBLY_DESCRIPTION,CIR_QTY,COUNT))`,
+                    $apply: `filter(LOCATION_ID eq '${sLocation}' and PRODUCT_ID eq '${sProduct}' and (WEEK_DATE ge ${oStartDate.toLocaleDateString("en-CA")} and WEEK_DATE le ${oEndDate.toLocaleDateString("en-CA")}) and (${unique}))/groupby((UNIQUE_ID,WEEK_DATE,ASSEMBLY_DESCRIPTION,CIR_QTY,COUNT))`,
 
                     // "$select": "WEEK_DATE,ASSEMBLY_DESC,CIR_QTY,COUNT",
                     "$top": 100000
@@ -3818,6 +3832,14 @@ console.log("")
                var uniqueID = this.byId("idUniqueID");
             var  uniqueIdF = uniqueID.getSelectedItems().length > 0 ? uniqueID.getSelectedItems().map(y=>{ return y.getText()}):uniqueID.getItems().map(x=>{return x.getText()})
 
+
+              var fData = this.chartfinData;
+            if(fData){
+                if(fData.length>0){
+             const uniqueIDs1 = [...new Set(fData.map(item => item.UNIQUE_ID))];
+             var uniqueIdF = uniqueIDs1
+            }
+        }
             // Get all Unique IDs from the dropdown (not just selected ones)
             var oUniqueIDModel = this.getView().getModel("dependentModel");
             var aAllUniqueIDs = oUniqueIDModel ? (oUniqueIDModel.getProperty("/UniqueIDs") || []) : [];
