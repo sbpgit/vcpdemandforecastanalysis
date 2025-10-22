@@ -271,7 +271,7 @@ sap.ui.define([
             this.byId("idLocation").setSelectedKey("");
             this.byId("idLocation").setForceSelection(false);
 
-            // Additional timeout to ensure no auto-selection
+            //new change
             setTimeout(() => {
                 this.byId("idLocation").setSelectedKey("");
                 console.log("Location selection forcefully cleared");
